@@ -3,5 +3,6 @@ CMakeCache.txt
 ros/.vscode
 
 ros/build/
-
 ros/devel/
+
+*.pyc

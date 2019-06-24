@@ -28,3 +28,15 @@ to by the controller to drive through these waypoints.
 ## Drive-by-wire Node
 
 ![dbw_node](./resources/dbw-node.png)
+
+Subscribes
+
+* /current_velocity : Publishes current velocity of the car in SI units. 
+    * Message type : `TwistStamped`
+    * Additional info : Contains linear and angular velocity components of the vehicle.
+    We only use the linear velocity components of this message to compute steering, throttle and brake values
+
+* /twist_cmd : Publishes linear and angular velocities which must be taken by the vehicle in order 
+to hit the waypoints computed by the Waypoint Updater node.
+    * Message type : `TwistStamped`
+    * Additional info : We use the linear and angular velocity components of this message to compute steering, throttle and brake values
