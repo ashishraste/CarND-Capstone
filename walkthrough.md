@@ -40,3 +40,32 @@ Subscribes
 to hit the waypoints computed by the Waypoint Updater node.
     * Message type : `TwistStamped`
     * Additional info : We use the linear and angular velocity components of this message to compute steering, throttle and brake values
+
+Publishes
+
+* Steering, throttle, and brake values on `/vehicle/steering_cmd`, `/vehicle/throttle_cmd`, and `/vehicle/brake_cmd` topics respectively.
+
+
+## Traffic Light Detector 
+
+![tl_detector](./resources/tl-detector-node.png)
+
+Subscribes
+
+* /base_waypoints : Complete list of waypoints for the test-track is used to stop at a waypoint in front of traffic-lights.
+    * Message type: `Lane`
+
+* /image_color : Contains frontal camera image stream in order to detect and classify the traffic lights.
+
+* /current_pose : Used to determine vehicle's location.
+
+* /vehicle/traffic_lights : Contains traffic lights' position in 3D space (x, y, z).
+    * Additional info: When working on the simulator, this topic will have state of the light (red, green, yellow). We could use them for testing the classifier in the simulator, and use the classifier in the real-run to publish the state of the lights
+
+Publishes
+
+* /traffic_waypoint : Waypoint nearest to a red light's stop-line. Is used by the [waypoint-updater](#waypoint-updater) node to stop the vehicle near the traffic light.
+
+Paramater Config used
+
+* /traffic_light_config : Contains a dictionary of permanent waypoint coordinates of traffic lights' stop-line existing in the simulated track.
