@@ -5,8 +5,9 @@ from geometry_msgs.msg import PoseStamped
 from styx_msgs.msg import Lane, Waypoint
 from scipy.spatial import KDTree
 import numpy as np
-
 import math
+
+from common_tools.helper import Helper
 
 '''
 This node will publish waypoints from the car's current position to some `x` distance ahead.
@@ -36,8 +37,8 @@ class WaypointUpdater(object):
         # TODO: Add a subscriber for /traffic_waypoint and /obstacle_waypoint below
 
         self.final_waypoints_pub = rospy.Publisher('final_waypoints', Lane, queue_size=1)   
-        nones = lambda x: [None for i in range(x)]    
-        self.base_waypoints, self.pose, self.waypoints_2d, self.waypoints_tree = nones(4)
+        # nones = lambda x: [None for i in range(x)]    
+        self.base_waypoints, self.pose, self.waypoints_2d, self.waypoints_tree = Helper.get_none_instances(4)
     
         self.loop()
 

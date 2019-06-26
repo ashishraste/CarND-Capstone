@@ -10,6 +10,9 @@ from light_classification.tl_classifier import TLClassifier
 import tf
 import cv2
 import yaml
+from scipy.spatial import KDTree
+
+from common_tools.helper import Helper
 
 STATE_COUNT_THRESHOLD = 3
 
@@ -49,6 +52,8 @@ class TLDetector(object):
         self.last_wp = -1
         self.state_count = 0
 
+        self.base_waypoints, self.pose, self.waypoints_2d, self.waypoints_tree = Helper.get_none_instances(4)        
+
         rospy.spin()
 
     def pose_cb(self, msg):
@@ -56,6 +61,10 @@ class TLDetector(object):
 
     def waypoints_cb(self, waypoints):
         self.waypoints = waypoints
+        if self.waypoints_2d is None:
+            self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] \
+                for waypoint in waypoints.waypoints]
+            self.waypoints_tree = KDTree(self.waypoints_2d)
 
     def traffic_cb(self, msg):
         self.lights = msg.lights
@@ -100,8 +109,7 @@ class TLDetector(object):
             int: index of the closest waypoint in self.waypoints
 
         """
-        #TODO implement
-        return 0
+        closest_wpt_index = self.waypoints_tree.query([x,y], 1)[1]
 
     def get_light_state(self, light):
         """Determines the current color of the traffic light
@@ -131,10 +139,12 @@ class TLDetector(object):
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
 
         """
-        light = None
+        light_ahead = None
+        line_wpt_index = None  # In the simulator, each light comes with a stop-line waypoint index
 
         # List of positions that correspond to the line to stop in front of for a given intersection
         stop_line_positions = self.config['stop_line_positions']
+
         if(self.pose):
             car_position = self.get_closest_waypoint(self.pose.pose)
 
