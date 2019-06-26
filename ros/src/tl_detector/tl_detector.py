@@ -122,6 +122,7 @@ class TLDetector(object):
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
 
         """
+        # TODO Complete the classification pipeline
         # if(not self.has_image):
         #     self.prev_light_loc = None
         #     return False
@@ -150,8 +151,7 @@ class TLDetector(object):
         if(self.pose):
             car_position = self.get_closest_waypoint(self.pose.pose.position.x, self.pose.pose.position.y)
 
-        # TODO Change the following logic to switch from simulator's
-        # hard-coded traffic light position to detection based solution
+        # TODO Update the logic below with classified light status than using the simulated ones.
         diff = len(self.waypoints.waypoints)
         for i, light in enumerate(self.lights):
             tl_line_wpt = stop_line_positions[i]
