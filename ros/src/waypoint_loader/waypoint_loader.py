@@ -3,16 +3,15 @@
 import os
 import csv
 import math
-
 from geometry_msgs.msg import Quaternion
-
 from styx_msgs.msg import Lane, Waypoint
-
 import tf
 import rospy
+from common_tools.config import MAX_DECEL
+
 
 CSV_HEADER = ['x', 'y', 'z', 'yaw']
-MAX_DECEL = 1.0
+# MAX_DECEL = 1.0
 
 
 class WaypointLoader(object):
