@@ -21,10 +21,6 @@ class TLDetector(object):
     def __init__(self):
         rospy.init_node('tl_detector')
 
-        self.pose = None
-        self.waypoints = None
-        self.camera_image = None
-
         self.pose, self.waypoints, self.camera_image, self.waypoints_2d, \
             self.waypoints_tree = Helper.get_none_instances(5)
 
@@ -166,7 +162,7 @@ class TLDetector(object):
             for i, light in enumerate(self.lights):
                 # Get stop-line waypoint index
                 line = stop_line_positions[i]
-                tmp_wpt_index = self.get_closest_waypoint(self.pose.pose.position.x, self.pose.pose.position.y)
+                tmp_wpt_index = self.get_closest_waypoint(line[0], line[1])
                 d = tmp_wpt_index - car_wpt_index
                 if 0 <= d < diff:
                     diff = d
