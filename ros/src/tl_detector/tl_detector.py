@@ -15,15 +15,30 @@ from scipy.spatial import KDTree
 from common_tools.helper import Helper
 
 STATE_COUNT_THRESHOLD = 3
+SIM_MODE = True
 
 class TLDetector(object):
     def __init__(self):
         rospy.init_node('tl_detector')
 
-        self.pose = None
-        self.waypoints = None
-        self.camera_image = None
+        self.pose, self.waypoints, self.camera_image, self.waypoints_2d, \
+            self.waypoints_tree = Helper.get_none_instances(5)
+
         self.lights = []
+
+        self.bridge = CvBridge()
+        self.light_classifier = TLClassifier()
+        self.listener = tf.TransformListener()
+
+        self.state = TrafficLight.UNKNOWN
+        self.last_state = TrafficLight.UNKNOWN
+        self.last_wp = -1
+        self.state_count = 0
+        self.prev_light_loc = None
+        self.has_image = False
+
+        config_string = rospy.get_param("/traffic_light_config")
+        self.config = yaml.load(config_string)
 
         sub1 = rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
         sub2 = rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
@@ -38,21 +53,7 @@ class TLDetector(object):
         sub3 = rospy.Subscriber('/vehicle/traffic_lights', TrafficLightArray, self.traffic_cb)
         sub6 = rospy.Subscriber('/image_color', Image, self.image_cb)
 
-        config_string = rospy.get_param("/traffic_light_config")
-        self.config = yaml.load(config_string)
-
         self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
-
-        self.bridge = CvBridge()
-        self.light_classifier = TLClassifier()
-        self.listener = tf.TransformListener()
-
-        self.state = TrafficLight.UNKNOWN
-        self.last_state = TrafficLight.UNKNOWN
-        self.last_wp = -1
-        self.state_count = 0
-
-        self.base_waypoints, self.pose, self.waypoints_2d, self.waypoints_tree = Helper.get_none_instances(4)        
 
         rospy.spin()
 
@@ -61,7 +62,7 @@ class TLDetector(object):
 
     def waypoints_cb(self, waypoints):
         self.waypoints = waypoints
-        if self.waypoints_2d is None:
+        if not self.waypoints_2d:
             self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] \
                 for waypoint in waypoints.waypoints]
             self.waypoints_tree = KDTree(self.waypoints_2d)
@@ -99,6 +100,8 @@ class TLDetector(object):
             self.upcoming_red_light_pub.publish(Int32(self.last_wp))
         self.state_count += 1
 
+        self.has_image = False
+
     def get_closest_waypoint(self, x, y):
         """Identifies the closest path waypoint to the given position
             https://en.wikipedia.org/wiki/Closest_pair_of_points_problem
@@ -122,16 +125,18 @@ class TLDetector(object):
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
 
         """
-        # TODO Complete the classification pipeline
-        # if(not self.has_image):
-        #     self.prev_light_loc = None
-        #     return False
+        if SIM_MODE:
+            classification = light.state
+        else:
+            if (not self.has_image):
+              self.prev_light_loc = None
+              return False
+            cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
 
-        # cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
-
-        #Get classification
-        # return self.light_classifier.get_classification(cv_image)
-        return light.state
+            # Get classification
+            classification = self.light_classifier.get_classification(cv_image)
+        
+        return classification
 
     def process_traffic_lights(self):
         """Finds closest visible traffic light, if one exists, and determines its
@@ -142,31 +147,35 @@ class TLDetector(object):
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
 
         """
-        light_ahead = None
+        light_states_map = {0: "RED", 2: "GREEN", 1: "YELLOW", 4: "UNKNOWN"}
+
+        closest_light = None
         line_wpt_index = None  # In the simulator, each light comes with a stop-line waypoint index
 
         # List of positions that correspond to the line to stop in front of for a given intersection
         stop_line_positions = self.config['stop_line_positions']
 
-        if(self.pose):
-            car_position = self.get_closest_waypoint(self.pose.pose.position.x, self.pose.pose.position.y)
+        if self.pose and self.waypoints and self.waypoints_tree:
+            car_wpt_index = self.get_closest_waypoint(self.pose.pose.position.x, self.pose.pose.position.y)
+            diff = len(self.waypoints.waypoints)
 
-        # TODO Update the logic below with classified light status than using the simulated ones.
-        diff = len(self.waypoints.waypoints)
-        for i, light in enumerate(self.lights):
-            tl_line_wpt = stop_line_positions[i]
-            tmp_wpt_index = self.get_closest_waypoint(tl_line_wpt[0], tl_line_wpt[1])
-            d = tmp_wpt_index - car_position
-            if d >= 0 and d < diff:
-                diff = d
-                light_ahead = light 
-                line_wpt_index = tmp_wpt_index
+            for i, light in enumerate(self.lights):
+                # Get stop-line waypoint index
+                line = stop_line_positions[i]
+                tmp_wpt_index = self.get_closest_waypoint(line[0], line[1])
+                d = tmp_wpt_index - car_wpt_index
+                if 0 <= d < diff:
+                    diff = d
+                    closest_light = light
+                    line_wpt_index = tmp_wpt_index
 
-        if light_ahead:
-            state = self.get_light_state(light_ahead)
+        if closest_light:
+            state = self.get_light_state(closest_light)
+            rospy.logwarn("Nearest traffic light state: {0}".format(light_states_map[state]))
             return line_wpt_index, state
 
         # self.waypoints = None
+        rospy.logwarn("Nearest traffic light state: UNKNOWN")
         return -1, TrafficLight.UNKNOWN
 
 if __name__ == '__main__':
