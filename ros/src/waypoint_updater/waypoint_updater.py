@@ -26,8 +26,9 @@ as well as to verify your TL classifier.
 TODO (for Yousuf and Aaron): Stopline location for each traffic light.
 '''
 
-LOOKAHEAD_WPS = 200 # Number of waypoints we will publish. You can change this number
-NOSE_TO_CENTRE_OFFSET = 2  # Number of waypoints that approximately amounts to distance between the nose and the centre of the car.
+LOOKAHEAD_WPS = 25 # Number of waypoints we will publish. You can change this number
+BRAKING_DECEL = 1 / LOOKAHEAD_WPS  # Deceleration for braking
+NOSE_TO_CENTRE_OFFSET = 4  # Number of waypoints that approximately amounts to distance between the nose and the centre of the car.
 
 class WaypointUpdater(object):
     def __init__(self):
@@ -100,9 +101,9 @@ class WaypointUpdater(object):
             pt = Waypoint()
             pt.pose = wpt.pose
 
-            stop_idx = max(self.stopline_wpt_idx - closest_idx - NOSE_TO_CENTRE_OFFSET)
+            stop_idx = max(self.stopline_wpt_idx - closest_idx - NOSE_TO_CENTRE_OFFSET, 0)
             dist = self.distance(base_lane, i, stop_idx)
-            vel = math.sqrt(2 * MAX_DECEL * dist)
+            vel = math.sqrt(2 * MAX_DECEL * dist) + (i * BRAKING_DECEL)
             if vel < 1.:
                 vel = 0.
             

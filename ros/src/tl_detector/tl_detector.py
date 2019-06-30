@@ -15,6 +15,7 @@ from scipy.spatial import KDTree
 from common_tools.helper import Helper
 
 STATE_COUNT_THRESHOLD = 3
+SIM_MODE = True
 
 class TLDetector(object):
     def __init__(self):
@@ -122,16 +123,18 @@ class TLDetector(object):
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
 
         """
-        # TODO Complete the classification pipeline
-        # if(not self.has_image):
-        #     self.prev_light_loc = None
-        #     return False
+        if SIM_MODE:
+            classification = light.state
+        else:
+            if (not self.has_image):
+              self.prev_light_loc = None
+              return False
+            cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
 
-        # cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
-
-        #Get classification
-        # return self.light_classifier.get_classification(cv_image)
-        return light.state
+            # Get classification
+            classification = self.light_classifier.get_classification(cv_image)
+        
+        return classification
 
     def process_traffic_lights(self):
         """Finds closest visible traffic light, if one exists, and determines its
@@ -151,7 +154,6 @@ class TLDetector(object):
         if(self.pose):
             car_position = self.get_closest_waypoint(self.pose.pose.position.x, self.pose.pose.position.y)
 
-        # TODO Update the logic below with classified light status than using the simulated ones.
         diff = len(self.waypoints.waypoints)
         for i, light in enumerate(self.lights):
             tl_line_wpt = stop_line_positions[i]
