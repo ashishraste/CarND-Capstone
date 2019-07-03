@@ -1,0 +1,14 @@
+C:/Users/Brook/Desktop/Brook_tlc/SIM/data/test_imgs\1123731_1.jpg:  Green
+C:/Users/Brook/Desktop/Brook_tlc/SIM/data/test_imgs\13215_0.jpg:  Green
+C:/Users/Brook/Desktop/Brook_tlc/SIM/data/test_imgs\1538885_1.jpg:  Green
+C:/Users/Brook/Desktop/Brook_tlc/SIM/data/test_imgs\2889236_1.jpg:  Red
+C:/Users/Brook/Desktop/Brook_tlc/SIM/data/test_imgs\593654_0.jpg:  Green
+C:/Users/Brook/Desktop/Brook_tlc/SIM/data/test_imgs\6708733_0.jpg:  Yellow
+C:/Users/Brook/Desktop/Brook_tlc/SIM/data/test_imgs\6856258_1.jpg:  Yellow
+C:/Users/Brook/Desktop/Brook_tlc/SIM/data/test_imgs\6894759_1.jpg:  Yellow
+C:/Users/Brook/Desktop/Brook_tlc/SIM/data/test_imgs\9581637_1.jpg:  Red
+C:/Users/Brook/Desktop/Brook_tlc/SIM/data/test_imgs\9676104_1.jpg:  Red
+C:/Users/Brook/Desktop/Brook_tlc/SIM/data/test_imgs\9781470_0.jpg:  Red
+C:/Users/Brook/Desktop/Brook_tlc/SIM/data/test_imgs\9831121_1.jpg:  Red
+C:/Users/Brook/Desktop/Brook_tlc/SIM/data/test_imgs\9962623_1.jpg:  Red
+C:/Users/Brook/Desktop/Brook_tlc/SIM/data/test_imgs\9986008_1.jpg:  Red
