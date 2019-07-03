@@ -7,3 +7,7 @@ ros/devel/
 
 *.pyc
 ros/*/*/.pyc
+
+model/sim_traffic_light_detector/yolo\.h5
+
+model/\.DS_Store
