@@ -1,4 +1,7 @@
 <?xml version="1.0"?>
 <launch>
     <node pkg="tl_detector" type="tl_detector.py" name="tl_detector" output="screen" cwd="node"/>
+    <param name="model_path" value="$(find styx)../../../model/sim_traffic_light_detector/yolo.h5" />
+    <param name="model_classes" value="$(find styx)../../../model/sim_traffic_light_detector/coco_classes.txt" />
+    <param name="model_anchor" value="$(find styx)../../../model/sim_traffic_light_detector/yolo_anchors.txt" />
 </launch>

@@ -25,11 +25,6 @@ class TLDetector(object):
             self.waypoints_tree = Helper.get_none_instances(5)
 
         self.lights = []
-
-        self.bridge = CvBridge()
-        self.light_classifier = TLClassifier()
-        self.listener = tf.TransformListener()
-
         self.state = TrafficLight.UNKNOWN
         self.last_state = TrafficLight.UNKNOWN
         self.last_wp = -1
@@ -40,8 +35,14 @@ class TLDetector(object):
         config_string = rospy.get_param("/traffic_light_config")
         self.config = yaml.load(config_string)
 
-        sub1 = rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
-        sub2 = rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
+        self.detector_config = {}
+        self.detector_config["model_anchor"] = rospy.get_param("model_anchor")
+        self.detector_config["model_classes"] = rospy.get_param("model_classes")
+        self.detector_config["model_path"] = rospy.get_param("model_path")
+
+        self.bridge = CvBridge()
+        self.light_classifier = TLClassifier(self.config["is_site"], self.detector_config)
+        self.listener = tf.TransformListener()
 
         '''
         /vehicle/traffic_lights provides you with the location of the traffic light in 3D map space and
@@ -50,6 +51,8 @@ class TLDetector(object):
         simulator. When testing on the vehicle, the color state will not be available. You'll need to
         rely on the position of the light and the camera image to predict it.
         '''
+        sub1 = rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
+        sub2 = rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
         sub3 = rospy.Subscriber('/vehicle/traffic_lights', TrafficLightArray, self.traffic_cb)
         sub6 = rospy.Subscriber('/image_color', Image, self.image_cb)
 
@@ -125,16 +128,17 @@ class TLDetector(object):
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
 
         """
-        if SIM_MODE:
-            classification = light.state
-        else:
-            if (not self.has_image):
-              self.prev_light_loc = None
-              return False
-            cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
+        # if SIM_MODE:
+        #     classification = light.state
+        # else:
+        if not self.has_image:
+            self.prev_light_loc = None
+            return False
+        
+        cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "rgb8")
 
-            # Get classification
-            classification = self.light_classifier.get_classification(cv_image)
+        # Get classification
+        classification = self.light_classifier.get_classification(cv_image)
         
         return classification
 
