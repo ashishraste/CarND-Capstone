@@ -71,7 +71,7 @@ Subscribes
 
 * /current_pose : Used to determine car's location.
 
-*  car/traffic_lights : Contains traffic lights' position in 3D space (x, y, z).
+*  /vehicle/traffic_lights : Contains traffic lights' position in 3D space (x, y, z).
     * Additional info: When working on the simulator, this topic will have state of the light (red, green, yellow). We could use them for testing the classifier in the simulator, and use the classifier in the real-run to publish the state of the lights
 
 Publishes
