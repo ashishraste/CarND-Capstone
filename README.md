@@ -1,7 +1,4 @@
 # CarND-Capstone
-Capstone project of Udacity's Self Driving Car Engineer Nanodegree
-
-## Overview
 
 This is the Capstone project of Udacity's Self Driving Car Engineer Nanodegree course. In this project we 
 build various components to drive an autonomous car around a simulated and real-site test tracks.
@@ -11,7 +8,7 @@ build various components to drive an autonomous car around a simulated and real-
 Please follow the instructions [here](https://github.com/udacity/CarND-Capstone) in order to get setup with:
 
 * Robot Operating System (ROS) : Installed in either a Docker container or on an Ubuntu (recommended 16.04)
-OS which could be in a virtual-machine or a dedicated OS
+operating system (OS) which could be a virtual-machine or a dedicated OS
 * Udacity simulator : Installed and run in the Ubuntu OS
 
 ## Component Details
