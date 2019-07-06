@@ -28,7 +28,7 @@ TODO (for Yousuf and Aaron): Stopline location for each traffic light.
 LOOKAHEAD_WPS = 50 # Number of waypoints we will publish. You can change this number
 MAX_DECEL = 5.0
 BRAKING_DECEL = 1 / LOOKAHEAD_WPS  # Deceleration for braking
-NOSE_TO_CENTRE_OFFSET = 4  # Number of waypoints that approximately amounts to distance between the nose and the centre of the car.
+NOSE_TO_CENTRE_OFFSET = 8  # Number of waypoints that approximately amounts to distance between the nose and the centre of the car.
 
 class WaypointUpdater(object):
     def __init__(self):
