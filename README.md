@@ -3,6 +3,14 @@
 This is the Capstone project of Udacity's Self Driving Car Engineer Nanodegree course. In this project we 
 build various components to drive an autonomous car around a simulated and real-site test tracks.
 
+## Team Hawkeye Details
+
+| Name         | Udacity account email |
+|:------------:|:---------------------:|
+| Ashish Raste | rasteashish@gmail.com |
+| Brook Cheng  | mathstacs@gmail.com   |
+| Noopur Divekar | noopurdivekar08@gmail.com |
+
 ## Installation Instructions
 
 Please follow the instructions [here](https://github.com/udacity/CarND-Capstone) in order to get setup with:
