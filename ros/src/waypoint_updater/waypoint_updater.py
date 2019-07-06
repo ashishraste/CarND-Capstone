@@ -49,7 +49,7 @@ class WaypointUpdater(object):
         
         self.vehicle_state = VehicleState.Drive
 
-        self.loop_rate = 10  # in Hz
+        self.loop_rate = 50  # in Hz
         self.loop()
 
     def loop(self):
@@ -60,6 +60,7 @@ class WaypointUpdater(object):
                 closest_wpt_index = self.get_closest_waypoint_index()
                 if closest_wpt_index is not None:
                     self.publish_waypoints(closest_wpt_index)
+            self.prev_velocity = self.cur_velocity
             rate.sleep()
 
     def pose_cb(self, pose_stamped_msg):
@@ -111,12 +112,6 @@ class WaypointUpdater(object):
     def generate_lane(self, closest_idx):
         farthest_idx = closest_idx + LOOKAHEAD_WPS
         lane_waypoints = self.base_waypoints.waypoints[closest_idx:farthest_idx]
-
-        # If traffic_waypoint index is not set, continue with base-waypoints
-        # if self.stopline_wpt_idx == -1 or (self.stopline_wpt_idx >= farthest_idx):
-        #     lane_msg.waypoints = lane_waypoints
-        # else:
-        #     lane_msg.waypoints = self.get_decelerating_waypoints(closest_idx, lane_waypoints)
 
         if self.stopline_wpt_idx != None and (closest_idx <= self.stopline_wpt_idx <= farthest_idx):
             self.vehicle_state = VehicleState.Stop

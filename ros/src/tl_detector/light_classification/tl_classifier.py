@@ -56,13 +56,13 @@ class TLClassifier(object):
 
         if scores[0] > self.classification_threshold:
             if classes[0] == 1:
-                loginfo('Detected {}'.format(CLASS_LABELS[1]))
+                loginfo('Traffic light detected: {}'.format(CLASS_LABELS[1]))
                 return TrafficLight.GREEN
             elif classes[0] == 2:
-                loginfo('Detected {}'.format(CLASS_LABELS[2]))
+                loginfo('Traffic light detected: {}'.format(CLASS_LABELS[2]))
                 return TrafficLight.RED
             elif classes[0] == 3:
-                loginfo('Detected {}'.format(CLASS_LABELS[3]))
+                loginfo('Traffic light detected: {}'.format(CLASS_LABELS[3]))
                 return TrafficLight.YELLOW
 
         return TrafficLight.UNKNOWN
