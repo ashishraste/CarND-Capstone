@@ -12,7 +12,6 @@ class TLClassifier(object):
             FROZEN_GRAPH_PATH = r'light_classification/model/ssd_v2_sim/frozen_inference_graph.pb'
         else:
             FROZEN_GRAPH_PATH = r'light_classification/model/ssd_v2_site/frozen_inference_graph.pb'
-        loginfo(FROZEN_GRAPH_PATH)
         self.graph = tf.Graph()
         self.classification_threshold = 0.5
 

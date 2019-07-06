@@ -24,7 +24,7 @@ class TLDetector(object):
         config_string = rospy.get_param("/traffic_light_config")
         self.config = yaml.load(config_string)
         self.is_site = self.config["is_site"]
-        rospy.loginfo("Is Site {}".format(self.is_site))
+        rospy.loginfo("Is Site: {}".format(self.is_site))
 
         self.pose, self.waypoints, self.camera_image, self.waypoints_2d, \
             self.waypoints_tree = Helper.get_none_instances(5)
