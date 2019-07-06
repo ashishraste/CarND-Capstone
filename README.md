@@ -22,7 +22,7 @@ We implement three major components to drive Carla (Udacity's self-driving car) 
 * Drive-by-wire Controller
 * Traffic Light Detector
 
-The overall architecture of the system with the above components is described in the [project-walkthrough doc](./walkthrough.md).
+Above components' description along with the overall architecture of the system is included in the [project-walkthrough document](./walkthrough.md).
 
 ## Attribution
 
