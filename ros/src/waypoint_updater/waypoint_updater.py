@@ -49,7 +49,7 @@ class WaypointUpdater(object):
         
         self.vehicle_state = VehicleState.Drive
 
-        self.loop_rate = 50  # in Hz
+        self.loop_rate = 10  # in Hz
         self.loop()
 
     def loop(self):
