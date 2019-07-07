@@ -48,8 +48,16 @@ class WaypointUpdater(object):
             self.cur_velocity, self.prev_velocity, self.decel_rate, self.stopline_wpt_idx = Helper.get_none_instances(8)
         
         self.vehicle_state = VehicleState.Drive
+        self.is_site = rospy.get_param("~is_site")
+        rospy.logdebug("Is Site: {}".format(self.is_site))
 
-        self.loop_rate = 10  # in Hz
+        if self.is_site:
+            self.loop_rate = 50  # 50 Hz for site run
+            rospy.logwarn("Waypoint updater frequency set to {}Hz for simulator run".format(self.loop_rate))
+        else:
+            self.loop_rate = 10  # 10 Hz for simulator run
+            rospy.logwarn("Waypoint updater frequency set to {}Hz for simulator run".format(self.loop_rate))
+        
         self.loop()
 
     def loop(self):
