@@ -9,11 +9,11 @@ CLASS_LABELS = {1: 'Green', 2: 'Red', 3: 'Yellow', 4: 'Unknown'}
 class TLClassifier(object):
     def __init__(self, is_site):
         if not is_site:
-            #FROZEN_GRAPH_PATH = r'light_classification/model/ssd_v2_sim/frozen_inference_graph.pb'
-            FROZEN_GRAPH_PATH = r'light_classification/model/tl_weights_classifier_sim.pb'
+            FROZEN_GRAPH_PATH = r'light_classification/model/ssd_v2_sim/frozen_inference_graph.pb'
+            #FROZEN_GRAPH_PATH = r'light_classification/model/tl_weights_classifier_sim.pb'
         else:
-            #FROZEN_GRAPH_PATH = r'light_classification/model/ssd_v2_site/frozen_inference_graph.pb'
-            FROZEN_GRAPH_PATH = r'light_classification/model/tl_weights_classifier_carla.pb'
+            FROZEN_GRAPH_PATH = r'light_classification/model/ssd_v2_site/frozen_inference_graph.pb'
+            #FROZEN_GRAPH_PATH = r'light_classification/model/tl_weights_classifier_carla.pb'
         self.graph = tf.Graph()
         self.classification_threshold = 0.5
 
