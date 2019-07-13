@@ -14,7 +14,7 @@ from scipy.spatial import KDTree
 
 from common_tools.helper import Helper
 
-STATE_COUNT_THRESHOLD = 2
+STATE_COUNT_THRESHOLD = 2  # Number of times for a light-state to be repeated before it is considered true. 
 SIM_MODE = True
 
 class TLDetector(object):
@@ -36,7 +36,6 @@ class TLDetector(object):
         self.listener = tf.TransformListener()
 
         self.state = TrafficLight.UNKNOWN
-        self.last_state = TrafficLight.UNKNOWN
         self.last_wp = -1
         self.state_count = 0
         self.prev_light_loc = None
@@ -66,16 +65,20 @@ class TLDetector(object):
             '''
             Publish upcoming red lights at camera frequency.
             Each predicted state has to occur `STATE_COUNT_THRESHOLD` number
-            of times till we start using it. Otherwise the previous stable state is
+            of times before we start using it. Otherwise the previous stable state is
             used.
             '''
             if self.pose and self.waypoints and self.camera_image:
                 light_wpt, state = self.process_traffic_lights()
                 if self.state != state:
+                    if self.state == TrafficLight.RED and state == TrafficLight.GREEN:
+                        self.last_state = self.state
+                        self.last_wp = -1
+                        rospy.logdebug('Publishing Green light {}'.format(Int32(self.last_wp)))
+                        self.upcoming_red_light_pub.publish(Int32(self.last_wp))
                     self.state_count = 0
                     self.state = state
-                elif self.state_count >= STATE_COUNT_THRESHOLD:
-                    self.last_state = self.state
+                elif self.state_count >= STATE_COUNT_THRESHOLD-1:
                     light_wpt = light_wpt if state == TrafficLight.RED else -1
                     self.last_wp = light_wpt
                     self.upcoming_red_light_pub.publish(Int32(light_wpt))
@@ -105,7 +108,6 @@ class TLDetector(object):
         """
         self.has_image = True
         self.camera_image = msg
-        # light_wp, state = self.process_traffic_lights()
 
     def get_closest_waypoint(self, x, y):
         """Identifies the closest path waypoint to the given position
@@ -129,8 +131,7 @@ class TLDetector(object):
 
         """
         if not self.has_image:
-            self.prev_light_loc = None
-            return False
+            return TrafficLight.UNKNOWN
         
         cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
         # Get classification
