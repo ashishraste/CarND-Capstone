@@ -1,11 +1,7 @@
-import rospy
+from rospy import get_time
 from yaw_controller import YawController
 from pid import PID
 from lowpass import LowPassFilter
-
-GAS_DENSITY = 2.858
-ONE_MPH = 0.44704
-
 
 class Controller(object):
     def __init__(self, vehicle_mass, fuel_capacity, brake_deadband, decel_limit, 
@@ -35,7 +31,7 @@ class Controller(object):
 
         self.cur_linear_vel = None
 
-        self.last_update_time = rospy.get_time()
+        self.last_update_time = get_time()
 
     def control(self, linear_vel, angular_vel, cur_linear_vel, dbw_enabled):
         # TODO: Change the arg, kwarg list to suit your needs
@@ -51,7 +47,7 @@ class Controller(object):
         vel_error = linear_vel - cur_linear_vel
         self.last_vel = cur_linear_vel
 
-        current_time = rospy.get_time()
+        current_time = get_time()
         sample_time = current_time - self.last_update_time
         self.last_update_time = current_time
 
