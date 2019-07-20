@@ -4,37 +4,39 @@ from pid import PID
 from lowpass import LowPassFilter
 
 class Controller(object):
-    def __init__(self, vehicle_mass, fuel_capacity, brake_deadband, decel_limit, 
-    accel_limit, wheel_radius, wheel_base, steer_ratio, max_lat_accel, max_steer_angle):
-        
-        min_speed = 0.1
-        self.yaw_controller = YawController(wheel_base, steer_ratio, min_speed, max_lat_accel, max_steer_angle)
+    def __init__(self, *args, **kwargs):
 
-        # PID Controller params
+        # Controller params
+        self.vehicle_mass    = kwargs['vehicle_mass']
+        self.decel_limit     = kwargs['decel_limit']
+        self.accel_limit     = kwargs['accel_limit']
+        self.wheel_radius    = kwargs['wheel_radius']
+        self.wheel_base      = kwargs['wheel_base']
+        self.steer_ratio     = kwargs['steer_ratio']
+        self.max_lat_accel   = kwargs['max_lat_accel']
+        self.max_steer_angle = kwargs['max_steer_angle']
+
+        min_speed = 0.1
+        self.yaw_controller = YawController(self.wheel_base,
+         self.steer_ratio, min_speed, self.max_lat_accel, self.max_steer_angle)
+
+        # Throttle controller params
         kp = 0.3
         ki = 0.1
         kd = 0.
         min_throttle = 0.
-        max_throttle = 0.2
+        max_throttle = 0.5 * self.accel_limit
         self.throttle_controller = PID(kp, ki, kd, min_throttle, max_throttle)
 
         tau = 0.5  # cutoff frequency = 1 / (2pi * tau)
         ts = 0.2  # sampling time
         self.vel_lpf = LowPassFilter(tau, ts)
 
-        self.vehicle_mass = vehicle_mass
-        self.fuel_capacity = fuel_capacity
-        self.brake_deadband = brake_deadband
-        self.decel_limit = decel_limit
-        self.accel_limit = accel_limit
-        self.wheel_radius = wheel_radius
-
         self.cur_linear_vel = None
 
         self.last_update_time = get_time()
 
     def control(self, linear_vel, angular_vel, cur_linear_vel, dbw_enabled):
-        # TODO: Change the arg, kwarg list to suit your needs
         # Return throttle, brake, steer
         if not dbw_enabled:
             self.throttle_controller.reset()
