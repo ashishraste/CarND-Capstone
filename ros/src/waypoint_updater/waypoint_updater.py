@@ -53,7 +53,7 @@ class WaypointUpdater(object):
 
         if self.is_site:
             self.loop_rate = 50  # 50 Hz for site run
-            rospy.logwarn("Waypoint updater frequency set to {}Hz for simulator run".format(self.loop_rate))
+            rospy.logwarn("Waypoint updater frequency set to {}Hz for site run".format(self.loop_rate))
         else:
             self.loop_rate = 10  # 10 Hz for simulator run
             rospy.logwarn("Waypoint updater frequency set to {}Hz for simulator run".format(self.loop_rate))
